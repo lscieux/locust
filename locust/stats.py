@@ -498,10 +498,33 @@ def print_error_report():
 
 def store_stats(filename, stats):
     with open(filename, "w") as f:
-        f.write("path,method,num_requests,num_failures,min_response_time,max_response_time,avg_response_time\n")
+        f.write(",".join([
+            '"Method"',
+            '"Name"',
+            '"# requests"',
+            '"# failures"',
+            '"Median response time"',
+            '"Average response time"',
+            '"Min response time"', 
+            '"Max response time"',
+            '"Average Content Size"',
+            '"Requests/s"',
+        ]))
+        f.write("\n")
         for k in stats:
-            r = stats[k]
-            f.write("%s,%s,%d,%d,%d,%d,%d\n" % (r.name,r.method,r.num_requests,r.num_failures,r.min_response_time,r.max_response_time,r.avg_response_time));
+            s = stats[k]
+            f.write('"%s","%s",%i,%i,%i,%i,%i,%i,%i,%.2f\n' % (
+                s.method,
+                s.name,
+                s.num_requests,
+                s.num_failures,
+                s.median_response_time,
+                s.avg_response_time,
+                s.min_response_time or 0,
+                s.max_response_time,
+                s.avg_content_length,
+                s.total_rps,
+            ))
 
 def stats_printer():
     from runners import locust_runner
